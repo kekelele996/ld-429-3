@@ -141,6 +141,25 @@ export const annotations: GuideAnnotation[] = [
     position: { x: -5.4, y: 3.2, z: -5 },
     title: '套印边缘',
     description: '左侧刻意留下 2mm 的错位边缘，模拟版画制程中的物理延迟。',
+    audioUrl: '/audio/guide-101-edge-misalignment.mp3',
+    order: 1,
+  },
+  {
+    id: 'guide-102',
+    artworkId: 'art-101',
+    position: { x: -6.0, y: 1.8, z: -5 },
+    title: '湿度痕迹',
+    description: '雨后湿度在画面右下角形成浅灰水渍，是城市气候的忠实记录。',
+    audioUrl: '/audio/guide-102-humidity-trace.mp3',
+    order: 2,
+  },
+  {
+    id: 'guide-103',
+    artworkId: 'art-102',
+    position: { x: 6.0, y: 3.0, z: -5 },
+    title: '色块压缩',
+    description: '蓝色扶手椅被压缩为几何色块，与背景墙面形成微妙的空间错觉。',
+    audioUrl: '/audio/guide-103-color-blocks.mp3',
     order: 1,
   },
   {
@@ -149,7 +168,17 @@ export const annotations: GuideAnnotation[] = [
     position: { x: -3.8, y: 3.1, z: -7 },
     title: '数据痕迹',
     description: '每条线段都对应一段匿名参观轨迹，热区在图面中央形成回声。',
+    audioUrl: '/audio/guide-104-data-traces.mp3',
     order: 1,
+  },
+  {
+    id: 'guide-105',
+    artworkId: 'art-104',
+    position: { x: -4.2, y: 2.0, z: -7 },
+    title: '回声密度',
+    description: '中央区域的线条密度最高，对应观众在该区域停留时间最长。',
+    audioUrl: '/audio/guide-105-echo-density.mp3',
+    order: 2,
   },
 ];
 
