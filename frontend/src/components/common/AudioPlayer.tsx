@@ -1,4 +1,4 @@
-import { useAudioPlayer } from '../../hooks/useAudioPlayer';
+import { useAudioPlayerStore } from '../../stores/audioPlayerStore';
 
 function formatTime(seconds: number): string {
   if (!isFinite(seconds) || seconds < 0) return '0:00';
@@ -14,7 +14,12 @@ interface AudioPlayerProps {
 }
 
 export function AudioPlayer({ src, label, className }: AudioPlayerProps) {
-  const { currentSrc, isPlaying, progress, duration, toggle, seek } = useAudioPlayer();
+  const currentSrc = useAudioPlayerStore((s) => s.currentSrc);
+  const isPlaying = useAudioPlayerStore((s) => s.isPlaying);
+  const progress = useAudioPlayerStore((s) => s.progress);
+  const duration = useAudioPlayerStore((s) => s.duration);
+  const toggle = useAudioPlayerStore((s) => s.toggle);
+  const seek = useAudioPlayerStore((s) => s.seek);
   const isActive = currentSrc === src;
 
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {

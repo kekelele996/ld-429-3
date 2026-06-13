@@ -1,12 +1,12 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ArtworkInfoCard } from '../components/common/ArtworkInfoCard';
 import { AudioPlayer } from '../components/common/AudioPlayer';
 import { GuideTooltip } from '../components/common/GuideTooltip';
 import { EmptyState } from '../components/common/EmptyState';
 import { useArtworkStore } from '../stores/artworkStore';
+import { useAudioPlayerStore } from '../stores/audioPlayerStore';
 import { useGuideStore } from '../stores/guideStore';
-import { useAudioPlayer } from '../hooks/useAudioPlayer';
 import { useVisitorTracking } from '../hooks/useVisitorTracking';
 
 export function ArtworkDetail() {
@@ -23,27 +23,25 @@ export function ArtworkDetail() {
   );
 
   const [activeIdx, setActiveIdx] = useState(0);
-  const { stop: stopAudio, play: playAudio } = useAudioPlayer();
+  const playAudio = useAudioPlayerStore((s) => s.play);
+  const stopAudio = useAudioPlayerStore((s) => s.stop);
 
   const annotationsWithAudio = useMemo(
     () => artworkAnnotations.filter((a) => a.audioUrl),
     [artworkAnnotations],
   );
 
-  const handleAnnotationEnd = useCallback(() => {
-    const nextIdx = activeIdx + 1;
-    if (nextIdx < annotationsWithAudio.length) {
-      setActiveIdx(nextIdx);
-      const nextAudioUrl = annotationsWithAudio[nextIdx].audioUrl;
-      if (nextAudioUrl) {
-        stopAudio();
-        playAudio(nextAudioUrl);
-      }
-    }
-  }, [activeIdx, annotationsWithAudio, stopAudio, playAudio]);
-
   const activeAudioSrc = annotationsWithAudio[activeIdx]?.audioUrl;
   const currentAnnotation = artworkAnnotations[activeIdx];
+
+  const switchToAnnotation = (idx: number) => {
+    setActiveIdx(idx);
+    const url = artworkAnnotations[idx]?.audioUrl;
+    if (url) {
+      stopAudio();
+      playAudio(url);
+    }
+  };
 
   if (!artwork) {
     return <EmptyState title="未找到作品" description="当前作品可能已经移出展览，返回展览列表继续浏览。" />;
@@ -78,12 +76,7 @@ export function ArtworkDetail() {
                   type="button"
                   className="border border-[var(--color-line)] px-3 py-1 text-xs disabled:opacity-40"
                   disabled={activeIdx === 0}
-                  onClick={() => {
-                    const prevIdx = Math.max(0, activeIdx - 1);
-                    setActiveIdx(prevIdx);
-                    const prevUrl = annotationsWithAudio[prevIdx]?.audioUrl;
-                    if (prevUrl) { stopAudio(); playAudio(prevUrl); }
-                  }}
+                  onClick={() => switchToAnnotation(Math.max(0, activeIdx - 1))}
                 >
                   上一条
                 </button>
@@ -91,12 +84,7 @@ export function ArtworkDetail() {
                   type="button"
                   className="border border-[var(--color-line)] px-3 py-1 text-xs disabled:opacity-40"
                   disabled={activeIdx >= annotationsWithAudio.length - 1}
-                  onClick={() => {
-                    const nextIdx = Math.min(annotationsWithAudio.length - 1, activeIdx + 1);
-                    setActiveIdx(nextIdx);
-                    const nextUrl = annotationsWithAudio[nextIdx]?.audioUrl;
-                    if (nextUrl) { stopAudio(); playAudio(nextUrl); }
-                  }}
+                  onClick={() => switchToAnnotation(Math.min(annotationsWithAudio.length - 1, activeIdx + 1))}
                 >
                   下一条
                 </button>
@@ -115,16 +103,12 @@ export function ArtworkDetail() {
           <div
             key={annotation.id}
             className={`cursor-pointer transition-opacity ${activeIdx === idx ? 'opacity-100' : 'opacity-60'}`}
-            onClick={() => {
-              setActiveIdx(idx);
-              if (annotation.audioUrl) { stopAudio(); playAudio(annotation.audioUrl); }
-            }}
+            onClick={() => switchToAnnotation(idx)}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
-                setActiveIdx(idx);
-                if (annotation.audioUrl) { stopAudio(); playAudio(annotation.audioUrl); }
+                switchToAnnotation(idx);
               }
             }}
           >

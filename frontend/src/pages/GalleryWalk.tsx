@@ -6,10 +6,10 @@ import { GuideTooltip } from '../components/common/GuideTooltip';
 import { MiniMap } from '../components/common/MiniMap';
 import { GalleryScene } from '../components/scene/GalleryScene';
 import { useFirstPersonController } from '../hooks/useFirstPersonController';
-import { useAudioPlayer } from '../hooks/useAudioPlayer';
 import { useGalleryScene } from '../hooks/useGalleryScene';
 import { useVisitorTracking } from '../hooks/useVisitorTracking';
 import { useArtworkStore } from '../stores/artworkStore';
+import { useAudioPlayerStore } from '../stores/audioPlayerStore';
 import { useExhibitionStore } from '../stores/exhibitionStore';
 import { useGuideStore } from '../stores/guideStore';
 
@@ -25,7 +25,10 @@ export function GalleryWalk() {
   const activeExhibition = useExhibitionStore((state) => state.exhibitions.find((e) => e.id === activeExhibitionId));
   const audioGuideUrl = activeExhibition?.audioGuideUrls?.[0];
 
-  const { currentSrc, isPlaying, stop: stopAudio, play: playAudio } = useAudioPlayer();
+  const currentSrc = useAudioPlayerStore((s) => s.currentSrc);
+  const isPlaying = useAudioPlayerStore((s) => s.isPlaying);
+  const playAudio = useAudioPlayerStore((s) => s.play);
+  const stopAudio = useAudioPlayerStore((s) => s.stop);
 
   useEffect(() => {
     if (annotation?.audioUrl) {
